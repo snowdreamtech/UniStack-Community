@@ -54,9 +54,13 @@ jobs:
 
       - name: Deploy to Remote Server via native rsync
         env:
+          # SSH private key for authenticating with the remote registry server
           SSH_PRIVATE_KEY: ${{ secrets.UNISTACK_REGISTRY_SSH_PRIVATE_KEY }}
+          # IP address or domain name of the remote registry server
           REMOTE_HOST: ${{ secrets.UNISTACK_REGISTRY_HOST }}
+          # SSH login username for the remote registry server
           REMOTE_USER: ${{ secrets.UNISTACK_REGISTRY_USER }}
+          # Target deployment path on the remote CDN or static storage server
           REMOTE_TARGET_PATH: ${{ secrets.UNISTACK_REGISTRY_TARGET_PATH }}
         run: |
           # 1. Start ssh-agent and load the private key
