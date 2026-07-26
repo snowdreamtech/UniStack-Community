@@ -59,16 +59,16 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_TARGET: ${{ secrets.REMOTE_TARGET }}
         run: |
-          # 1. 启动 ssh-agent 并加载私钥
+          # 1. Start ssh-agent and load the private key
           mkdir -p ~/.ssh
           eval $(ssh-agent -s)
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
           
-          # 2. 避免首次连接时的 SSH 主机密钥确认 (StrictHostKeyChecking)
+          # 2. Bypass SSH host key verification on first connection (StrictHostKeyChecking)
           cat >> ~/.ssh/config <<EOF
           Host *
             StrictHostKeyChecking no
           EOF
           
-          # 3. 使用系统原生的 rsync 进行增量推送 (参数 -c 用于校验和比对)
+          # 3. Use native rsync for incremental push (flag -c enables checksum comparison)
           rsync -rlgoDzvc -e "ssh -o StrictHostKeyChecking=no" dist/ ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_TARGET}
