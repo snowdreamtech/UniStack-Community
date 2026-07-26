@@ -57,7 +57,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.UNISTACK_REGISTRY_SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.UNISTACK_REGISTRY_HOST }}
           REMOTE_USER: ${{ secrets.UNISTACK_REGISTRY_USER }}
-          REMOTE_TARGET: ${{ secrets.UNISTACK_REGISTRY_TARGET }}
+          REMOTE_TARGET_PATH: ${{ secrets.UNISTACK_REGISTRY_TARGET_PATH }}
         run: |
           # 1. Start ssh-agent and load the private key
           mkdir -p ~/.ssh
@@ -71,4 +71,4 @@ jobs:
           EOF
           
           # 3. Use native rsync for incremental push (flag -c enables checksum comparison)
-          rsync -rlgoDzvc -e "ssh -o StrictHostKeyChecking=no" dist/ ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_TARGET}
+          rsync -rlgoDzvc -e "ssh -o StrictHostKeyChecking=no" dist/ ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_TARGET_PATH}
