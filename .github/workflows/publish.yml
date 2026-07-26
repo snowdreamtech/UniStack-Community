@@ -54,10 +54,10 @@ jobs:
 
       - name: Deploy to Remote Server via native rsync
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_TARGET: ${{ secrets.REMOTE_TARGET }}
+          SSH_PRIVATE_KEY: ${{ secrets.UNISTACK_REGISTRY_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.UNISTACK_REGISTRY_HOST }}
+          REMOTE_USER: ${{ secrets.UNISTACK_REGISTRY_USER }}
+          REMOTE_TARGET: ${{ secrets.UNISTACK_REGISTRY_TARGET }}
         run: |
           # 1. Start ssh-agent and load the private key
           mkdir -p ~/.ssh
