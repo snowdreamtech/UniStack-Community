@@ -1,0 +1,65 @@
+name: Publish to Registry
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup UniStack
+        uses: snowdreamtech/setup-unistack@v1
+
+      - name: Build Packages and Generate Index
+        run: |
+          # 1. Initialize the output registry directory
+          unistack repo init dist
+          
+          # 2. Iterate through all valid community packages and add them to the registry
+          # The directory structure is packages/a/author/package/
+          for pkg_dir in $(find packages -mindepth 3 -maxdepth 3 -type d); do
+            if [ -f "$pkg_dir/package.yml" ]; then
+              echo "Packaging $pkg_dir..."
+              
+              # Extract package name and version to create the tarball name
+              # e.g. packages/s/snowdreamtech/nginx -> snowdreamtech_nginx-1.0.0.tar.gz
+              # For simplicity, we can let unistack handle the tar.gz creation if the CLI supports it,
+              # OR we can manually tar it and add it.
+              # Here we manually tar it to match the `.tar.gz` format required by the spec.
+              
+              PKG_NAME=$(grep -oP '(?<=name: ")[^"]*' "$pkg_dir/package.yml" || grep -oP '(?<=name: )[^ ]*' "$pkg_dir/package.yml")
+              PKG_VER=$(grep -oP '(?<=version: ")[^"]*' "$pkg_dir/package.yml" || grep -oP '(?<=version: )[^ ]*' "$pkg_dir/package.yml")
+              
+              # Replace / with _ for the filename
+              SAFE_NAME="${PKG_NAME//\//_}"
+              TAR_NAME="${SAFE_NAME}-${PKG_VER}.tar.gz"
+              
+              tar -czf "$TAR_NAME" -C "$pkg_dir" .
+              
+              # Add to the registry (this copies it into dist/packages/... and validates it)
+              unistack repo add dist "$TAR_NAME"
+            fi
+          done
+          
+          # 3. Build the SQLite index (packages.db) for the registry
+          unistack repo build dist
+
+      - name: Deploy to Remote Server via rsync
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          # -r: recursive, -l: copy symlinks, -g: preserve group, -o: preserve owner
+          # -D: preserve devices, -z: compress file data, -v: verbose, -c: checksum (for incremental update)
+          ARGS: "-rlgoDzvc -i"
+          SOURCE: "dist/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
