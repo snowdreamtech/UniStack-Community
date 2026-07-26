@@ -26,7 +26,11 @@ jobs:
           for file in $(git diff --name-only origin/main | grep '^packages/.*package\.yml$' || true); do
             if [ -f "$file" ]; then
               # Extract the 'name' field
-              NAME=$(grep -oP '(?<=name: ")[^"]*' "$file" || grep -oP '(?<=name: )[^ ]*' "$file")
+              NAME=$(grep -oP '(?<=name: ")[^"]*' "$file" || grep -oP '(?<=name: )[^ ]*' "$file" || true)
+              if [ -z "$NAME" ]; then
+                echo "Error: Could not extract package name from $file. Missing 'name:' field."
+                exit 1
+              fi
               if [[ ! "$NAME" == *"/"* ]]; then
                 echo "Error: Package '$NAME' in $file MUST contain a namespace prefix (e.g., author/package)."
                 echo "Core namespaces without a prefix are strictly prohibited in the community registry."
