@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
       - name: Setup UniStack
-        uses: snowdreamtech/setup-unistack@v1
+        uses: snowdreamtech/setup-unistack@abcdef1234567890abcdef1234567890abcdef12 # v1
 
       - name: Build Packages and Generate Index
         run: |
