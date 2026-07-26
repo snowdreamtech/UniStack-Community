@@ -1,0 +1,42 @@
+name: PR Validation
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate Package Namespace
+        run: |
+          # Check all package.yml files that were modified or added in this PR
+          for file in $(git diff --name-only origin/main | grep '^packages/.*package\.yml$'); do
+            if [ -f "$file" ]; then
+              # Extract the 'name' field
+              NAME=$(grep -oP '(?<=name: ")[^"]*' "$file" || grep -oP '(?<=name: )[^ ]*' "$file")
+              if [[ ! "$NAME" == *"/"* ]]; then
+                echo "Error: Package '$NAME' in $file MUST contain a namespace prefix (e.g., author/package)."
+                echo "Core namespaces without a prefix are strictly prohibited in the community registry."
+                exit 1
+              fi
+              echo "✅ Package $NAME passed namespace validation."
+            fi
+          done
+
+      - name: Validate YAML Format
+        run: |
+          # Basic YAML linting
+          sudo apt-get install -y yamllint
+          for file in $(git diff --name-only origin/main | grep '^packages/.*package\.yml$'); do
+            if [ -f "$file" ]; then
+              yamllint -d "{extends: relaxed, rules: {line-length: disable}}" "$file"
+              echo "✅ $file passed yaml linting."
+            fi
+          done
