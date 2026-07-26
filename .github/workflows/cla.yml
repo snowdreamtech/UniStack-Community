@@ -14,7 +14,7 @@ jobs:
         uses: contributor-assistant/github-action@9340315624c6e16cef1f2c63bdeb0f0c49c6f474 # v2.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.WORKFLOW_SECRET }}
         with:
           path-to-signatures: 'signatures/version1/cla.json'
           path-to-document: 'https://github.com/snowdreamtech/UniStack-Community/blob/main/CLA.md'
