@@ -35,8 +35,8 @@ jobs:
               # OR we can manually tar it and add it.
               # Here we manually tar it to match the `.tar.gz` format required by the spec.
               
-              PKG_NAME=$(grep -oP '(?<=name: ")[^"]*' "$pkg_dir/package.yml" || grep -oP '(?<=name: )[^ ]*' "$pkg_dir/package.yml")
-              PKG_VER=$(grep -oP '(?<=version: ")[^"]*' "$pkg_dir/package.yml" || grep -oP '(?<=version: )[^ ]*' "$pkg_dir/package.yml")
+              PKG_NAME=$(grep -oP '(?<=name: ")[^"]*' "$pkg_dir/package.yml" || grep -oP '(?<=name: )[^ ]*' "$pkg_dir/package.yml" || true)
+              PKG_VER=$(grep -oP '(?<=version: ")[^"]*' "$pkg_dir/package.yml" || grep -oP '(?<=version: )[^ ]*' "$pkg_dir/package.yml" || true)
               
               # Replace / with _ for the filename
               SAFE_NAME="${PKG_NAME//\//_}"

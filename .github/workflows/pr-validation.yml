@@ -23,7 +23,7 @@ jobs:
       - name: Validate Package Namespace
         run: |
           # Check all package.yml files that were modified or added in this PR
-          for file in $(git diff --name-only origin/main | grep '^packages/.*package\.yml$'); do
+          for file in $(git diff --name-only origin/main | grep '^packages/.*package\.yml$' || true); do
             if [ -f "$file" ]; then
               # Extract the 'name' field
               NAME=$(grep -oP '(?<=name: ")[^"]*' "$file" || grep -oP '(?<=name: )[^ ]*' "$file")
@@ -40,7 +40,7 @@ jobs:
         run: |
           # Basic YAML linting
           sudo apt-get install -y yamllint
-          for file in $(git diff --name-only origin/main | grep '^packages/.*package\.yml$'); do
+          for file in $(git diff --name-only origin/main | grep '^packages/.*package\.yml$' || true); do
             if [ -f "$file" ]; then
               yamllint -d "{extends: relaxed, rules: {line-length: disable}}" "$file"
               echo "✅ $file passed yaml linting."
@@ -55,7 +55,7 @@ jobs:
           # Run actual package installation in an ephemeral container.
           # The container acts as the sandbox. It is allowed network access to verify upstream packages (e.g. apt, docker pull),
           # but relies on GitHub Actions' fork isolation (no secrets) and a strict timeout to prevent abuse (e.g. mining).
-          for file in $(git diff --name-only origin/main | grep '^packages/.*package\.yml$'); do
+          for file in $(git diff --name-only origin/main | grep '^packages/.*package\.yml$' || true); do
             if [ -f "$file" ]; then
               echo "Testing real installation of $file in sandbox..."
               pkg_dir=$(dirname "$file")
