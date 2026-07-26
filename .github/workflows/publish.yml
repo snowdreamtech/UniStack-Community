@@ -52,14 +52,23 @@ jobs:
           # 3. Build the SQLite index (packages.db) for the registry
           unistack repo build dist
 
-      - name: Deploy to Remote Server via rsync
-        uses: easingthemes/ssh-deploy@main
+      - name: Deploy to Remote Server via native rsync
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          # -r: recursive, -l: copy symlinks, -g: preserve group, -o: preserve owner
-          # -D: preserve devices, -z: compress file data, -v: verbose, -c: checksum (for incremental update)
-          ARGS: "-rlgoDzvc -i"
-          SOURCE: "dist/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}
+          REMOTE_TARGET: ${{ secrets.REMOTE_TARGET }}
+        run: |
+          # 1. 启动 ssh-agent 并加载私钥
+          mkdir -p ~/.ssh
+          eval $(ssh-agent -s)
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+          
+          # 2. 避免首次连接时的 SSH 主机密钥确认 (StrictHostKeyChecking)
+          cat >> ~/.ssh/config <<EOF
+          Host *
+            StrictHostKeyChecking no
+          EOF
+          
+          # 3. 使用系统原生的 rsync 进行增量推送 (参数 -c 用于校验和比对)
+          rsync -rlgoDzvc -e "ssh -o StrictHostKeyChecking=no" dist/ ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_TARGET}
