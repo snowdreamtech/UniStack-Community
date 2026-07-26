@@ -54,7 +54,7 @@ jobs:
 
       - name: Deploy to Remote Server via native rsync
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.UNISTACK_REGISTRY_SSH_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.UNISTACK_REGISTRY_SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.UNISTACK_REGISTRY_HOST }}
           REMOTE_USER: ${{ secrets.UNISTACK_REGISTRY_USER }}
           REMOTE_TARGET: ${{ secrets.UNISTACK_REGISTRY_TARGET }}
