@@ -19,4 +19,4 @@ jobs:
           path-to-signatures: 'signatures/version1/cla.json'
           path-to-document: 'https://github.com/snowdreamtech/UniStack-Community/blob/main/CLA.md'
           branch: 'main'
-          allowlist: 'bot*'
+          allowlist: 'dependabot[bot],dependabot-preview[bot],github-actions[bot],*bot*'
