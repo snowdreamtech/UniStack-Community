@@ -2,7 +2,10 @@
 # defaults/main.yml for the hello package
 
 app_name: "hello"
-app_version: "2.12.x"
 
-# Container mode specific variables
+# Native Mode Configuration
+app_packages:
+  - "hello"
+
+# Container Mode Configuration
 app_image: "hello-world"
