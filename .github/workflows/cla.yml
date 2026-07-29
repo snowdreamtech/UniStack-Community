@@ -20,3 +20,4 @@ jobs:
           path-to-document: 'https://github.com/snowdreamtech/UniStack-Community/blob/main/CLA.md'
           branch: 'main'
           allowlist: 'dependabot[bot],dependabot-preview[bot],github-actions[bot],*bot*'
+          custom-notsigned-prcomment: 'Thank you for your submission! It seems you have not yet signed our Contributor License Agreement (CLA).<br/>**To sign it, please reply to this PR by leaving a comment with exactly the following text:**<br/><br/>`I have read the CLA Document and I hereby sign the CLA`'
