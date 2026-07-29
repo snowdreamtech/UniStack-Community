@@ -1,0 +1,11 @@
+---
+# defaults/main.yml for the hello package
+
+app_name: "hello"
+
+# Native Mode Configuration
+app_packages:
+  - "hello"
+
+# Container Mode Configuration
+app_image: "hello-world"
