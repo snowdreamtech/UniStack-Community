@@ -3,7 +3,7 @@ apiVersion: "v1alpha1"
 kind: "package"
 
 metadata:
-  name: "hello"
+  name: "snowdreamtech/hello"
   version: "1.0.0"
   appVersion:
     - ">= 2.10.0"
