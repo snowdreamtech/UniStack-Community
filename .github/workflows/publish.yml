@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'packages/**'
+  workflow_dispatch:
 
 jobs:
   publish:
